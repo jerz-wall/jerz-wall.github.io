@@ -73,7 +73,6 @@ function shirtCard(s, { showTeam = true } = {}) {
     <div class="meta">
       ${showTeam ? `<strong>${esc(t.he)}</strong>` : `<strong>${esc(typeHe(s.type))}</strong>`}
       <span class="sub">${esc(s.season)}${showTeam ? ` · ${esc(typeHe(s.type))}` : ''}</span>
-      <code>${esc(s.code)}</code>
     </div>
   </a></div>`;
 }
@@ -298,11 +297,6 @@ function pageShirt(code) {
             <div><dt>קטגוריה</dt><dd>${esc(cat.he)}</dd></div>
             ${country ? `<div><dt>מדינה</dt><dd>${esc(country.he)}</dd></div>` : ''}
           </dl>
-          <button class="code-btn" type="button" data-copy="${esc(s.code)}" aria-label="העתקת קוד החולצה">
-            <span class="code-label">קוד חולצה</span>
-            <code>${esc(s.code)}</code>
-            <span class="code-copy">העתקה</span>
-          </button>
           <button class="pick-big ${picked.has(s.code) ? 'on' : ''}" type="button" data-pick="${esc(s.code)}" aria-pressed="${picked.has(s.code)}">
             <span class="pick-mark">✓</span><span class="pick-text">${picked.has(s.code) ? 'נבחרה לרשימה' : 'בחירה לרשימה'}</span>
           </button>
@@ -645,18 +639,6 @@ function toast(msg) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 1600);
 }
 
-view.addEventListener('click', async (e) => {
-  const btn = e.target.closest('[data-copy]');
-  if (!btn) return;
-  try {
-    await navigator.clipboard.writeText(btn.dataset.copy);
-    toast(`הקוד ${btn.dataset.copy} הועתק ✔`);
-  } catch {
-    toast(btn.dataset.copy);
-  }
-  btn.classList.add('copied');
-  setTimeout(() => btn.classList.remove('copied'), 900);
-});
 
 // ---------- הרשימה שלי: בחירת חולצות ושליחה בוואטסאפ ----------
 // הבחירה נשמרת בדפדפן של מי שבחר. כדי להעביר אותה לחבר שולחים קישור שמכיל את קודי החולצות.
