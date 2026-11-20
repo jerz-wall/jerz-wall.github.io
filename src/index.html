@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow, noimageindex, noarchive">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="theme-color" content="#0B0F1A">
+  <title>KITZ · קיר החולצות</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B0F1A'/%3E%3Ctext x='32' y='46' font-family='Arial Black,Arial' font-weight='900' font-size='40' text-anchor='middle' fill='%2339FF88'%3EK%3C/text%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="KITZ">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="top-row">
+      <a href="#/" class="brand" aria-label="KITZ, לדף הבית">
+        <span class="brand-name">KITZ</span>
+        <span class="brand-sub">קיר החולצות</span>
+      </a>
+      <form class="search" id="search-form" role="search" autocomplete="off">
+        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="q" type="search" enterkeyhint="search" placeholder="חפשו קבוצה, נבחרת או קוד…"
+               role="combobox" aria-expanded="false" aria-controls="suggest" aria-autocomplete="list" aria-label="חיפוש">
+        <ul id="suggest" class="suggest" role="listbox" hidden></ul>
+      </form>
+    </div>
+    <nav class="chips popular" id="popular" aria-label="קבוצות פופולריות"></nav>
+  </header>
+
+  <main id="view" class="view" tabindex="-1"></main>
+
+  <div id="lightbox" class="lightbox" hidden role="dialog" aria-modal="true" aria-label="תמונה מוגדלת">
+    <button class="lb-btn lb-close" type="button" aria-label="סגירה">✕</button>
+    <button class="lb-btn lb-prev" type="button" aria-label="התמונה הקודמת">‹</button>
+    <button class="lb-btn lb-next" type="button" aria-label="התמונה הבאה">›</button>
+    <div class="lb-track"></div>
+    <div class="lb-count"></div>
+    <div class="lb-hint">לחצו על התמונה להגדלה</div>
+  </div>
+
+  <a id="listbar" class="listbar" href="#/list">
+    <span class="lb-check">✓</span>
+    <span class="lb-num"></span>
+    <span class="lb-go">לרשימה ושליחה ‹</span>
+  </a>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

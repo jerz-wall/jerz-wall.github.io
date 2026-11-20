@@ -1,0 +1,126 @@
+{
+  "countries": {
+    "spain":   { "code": "ESP", "he": "ספרד",   "en": "Spain",   "aliases": ["La Liga", "לה ליגה"] },
+    "england": { "code": "ENG", "he": "אנגליה", "en": "England", "aliases": ["Premier League", "פרמייר ליג"] },
+    "germany": { "code": "GER", "he": "גרמניה", "en": "Germany", "aliases": ["Bundesliga", "בונדסליגה", "Deutschland"] },
+    "france":  { "code": "FRA", "he": "צרפת",   "en": "France",  "aliases": ["Ligue 1", "ליג 1", "ליג אן"] },
+    "italy":   { "code": "ITA", "he": "איטליה", "en": "Italy",   "aliases": ["Serie A", "סרייה A", "סריה א", "Italia"] },
+    "argentina": { "code": "ARG", "he": "ארגנטינה", "en": "Argentina", "aliases": ["Liga Profesional", "הליגה הארגנטינאית", "Primera División"] },
+    "usa": { "code": "USA", "he": "ארצות הברית", "en": "USA", "aliases": ["MLS", "אמריקה", "ארה\"ב", "United States"] }
+  },
+
+  "club": {
+    "barcelona": {
+      "code": "BAR", "he": "ברצלונה", "en": "Barcelona",
+      "aliases": ["בארסה", "ברסה", "בארצלונה", "בלאוגרנה", "Barca", "Barça", "FCB", "FC Barcelona"]
+    },
+    "real-madrid": {
+      "code": "RMA", "he": "ריאל מדריד", "en": "Real Madrid",
+      "aliases": ["ריאל", "הבלאנקוס", "מדריד", "Real", "Madrid", "Los Blancos", "RMCF"]
+    },
+    "arsenal": {
+      "code": "ARS", "he": "ארסנל", "en": "Arsenal",
+      "aliases": ["התותחנים", "Gunners", "The Gunners", "AFC"]
+    },
+    "manchester-united": {
+      "code": "MUN", "he": "מנצ'סטר יונייטד", "en": "Manchester United",
+      "aliases": ["יונייטד", "מן יו", "מנצסטר יונייטד", "השדים האדומים", "Man United", "Man Utd", "Man U", "MUFC", "United", "Red Devils"]
+    },
+    "manchester-city": {
+      "code": "MCI", "he": "מנצ'סטר סיטי", "en": "Manchester City",
+      "aliases": ["סיטי", "מן סיטי", "מנצסטר סיטי", "התכולים", "Man City", "City", "MCFC", "Citizens"]
+    },
+    "chelsea": {
+      "code": "CHE", "he": "צ'לסי", "en": "Chelsea",
+      "aliases": ["צלסי", "הבלוז", "Blues", "The Blues", "CFC"]
+    },
+    "liverpool": {
+      "code": "LIV", "he": "ליברפול", "en": "Liverpool",
+      "aliases": ["ליבר", "האדומים", "LFC", "Reds", "The Reds"]
+    },
+    "atletico-madrid": {
+      "code": "ATM", "he": "אתלטיקו מדריד", "en": "Atletico Madrid",
+      "aliases": ["אתלטיקו", "אתלטי", "Atletico", "Atlético", "Atleti", "Atlético Madrid"]
+    },
+    "bayern-munich": {
+      "code": "BAY", "he": "באיירן מינכן", "en": "Bayern Munich",
+      "aliases": ["באיירן", "בייאן", "באיירן מינכן", "Bayern", "FC Bayern", "Bayern München", "Bayern Munchen"]
+    },
+    "boca": {
+      "code": "BOC", "he": "בוקה ג'וניורס", "en": "Boca Juniors",
+      "aliases": ["בוקה", "בוקה גוניורס", "Boca", "CABJ", "Xeneize", "La Bombonera"]
+    },
+    "river": {
+      "code": "RIV", "he": "ריבר פלייט", "en": "River Plate",
+      "aliases": ["ריבר", "ריבר פלאטה", "River", "CARP", "Millonarios", "Los Millonarios"]
+    },
+    "miami": {
+      "code": "MIA", "he": "אינטר מיאמי", "en": "Inter Miami",
+      "aliases": ["מיאמי", "הקבוצה של מסי", "מסי", "Inter Miami", "Miami", "Inter Miami CF", "Messi"]
+    },
+    "dortmund": {
+      "code": "BVB", "he": "בורוסיה דורטמונד", "en": "Borussia Dortmund",
+      "aliases": ["דורטמונד", "בורוסיה", "BVB", "Dortmund", "Borussia"]
+    },
+    "psg": {
+      "code": "PSG", "he": "פריז סן ז'רמן", "en": "Paris Saint-Germain",
+      "aliases": ["פ.ס.ז", "פסז", "פריז", "פ.ס.ז'", "PSG", "Paris", "Paris SG"]
+    },
+    "inter": {
+      "code": "INT", "he": "אינטר", "en": "Inter Milan",
+      "aliases": ["אינטר מילאן", "אינטרנציונלה", "נראצורי", "Inter", "Internazionale", "Nerazzurri"]
+    },
+    "milan": {
+      "code": "MIL", "he": "מילאן", "en": "AC Milan",
+      "aliases": ["אי.סי מילאן", "איי סי מילאן", "רוסונרי", "Milan", "ACM", "Rossoneri"]
+    },
+    "napoli": {
+      "code": "NAP", "he": "נאפולי", "en": "Napoli",
+      "aliases": ["נפולי", "SSC Napoli", "Naples"]
+    },
+    "roma": {
+      "code": "ROM", "he": "רומא", "en": "AS Roma",
+      "aliases": ["אס רומא", "ג'אלורוסי", "Roma", "ASR", "Giallorossi"]
+    }
+  },
+
+  "national": {
+    "argentina": {
+      "code": "ARG", "he": "ארגנטינה", "en": "Argentina",
+      "aliases": ["אלביסלסטה", "Albiceleste"]
+    },
+    "brazil": {
+      "code": "BRA", "he": "ברזיל", "en": "Brazil",
+      "aliases": ["סלסאו", "Seleção", "Selecao", "Brasil"]
+    },
+    "england": {
+      "code": "ENG", "he": "אנגליה", "en": "England",
+      "aliases": ["האריות", "Three Lions", "Lions"]
+    },
+    "france": {
+      "code": "FRA", "he": "צרפת", "en": "France",
+      "aliases": ["הכחולים", "Les Bleus", "Bleus"]
+    },
+    "spain": {
+      "code": "ESP", "he": "ספרד", "en": "Spain",
+      "aliases": ["לה רוחה", "La Roja", "España", "Espana"]
+    },
+    "israel": {
+      "code": "ISR", "he": "ישראל", "en": "Israel",
+      "aliases": ["נבחרת ישראל", "הכחולים-לבנים", "הכחול לבן", "ISR"]
+    },
+    "portugal": {
+      "code": "POR", "he": "פורטוגל", "en": "Portugal",
+      "aliases": ["פורטוגאל", "הנבחרת של רונאלדו", "Seleção das Quinas", "Quinas"]
+    }
+  },
+
+  "nba": {
+    "lakers":   { "code": "LAL", "he": "לוס אנג'לס לייקרס", "en": "Los Angeles Lakers",    "aliases": ["לייקרס", "Lakers", "LA Lakers"] },
+    "warriors": { "code": "GSW", "he": "גולדן סטייט ווריורס", "en": "Golden State Warriors", "aliases": ["ווריורס", "גולדן סטייט", "Warriors", "Dubs"] },
+    "celtics":  { "code": "BOS", "he": "בוסטון סלטיקס",     "en": "Boston Celtics",        "aliases": ["סלטיקס", "Celtics", "Celts"] },
+    "bulls":    { "code": "CHI", "he": "שיקגו בולס",         "en": "Chicago Bulls",         "aliases": ["בולס", "Bulls"] },
+    "heat":     { "code": "MIA", "he": "מיאמי היט",          "en": "Miami Heat",            "aliases": ["היט", "Heat"] },
+    "portland": { "code": "POR", "he": "פורטלנד טרייל בלייזרס", "en": "Portland Trail Blazers", "aliases": ["פורטלנד", "בלייזרס", "Portland", "Blazers", "Trail Blazers", "Rip City"] }
+  }
+}
