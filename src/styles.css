@@ -195,6 +195,11 @@ button { font: inherit; color: inherit; }
 .cat-card:hover::before { border-color: var(--neon); box-shadow: inset 0 0 0 1px var(--neon), 0 0 40px rgba(57, 255, 136, .2); }
 .cat-card:hover .cat-bg img { transform: scale(1.06); }
 .cat-card:hover .cat-icon { transform: rotate(-14deg) scale(1.15); }
+.cat-card.has-logo .cat-bg { background: #fff; }
+.cat-card.has-logo .cat-bg img { object-fit: contain; padding: 22px 22px 96px; }
+.cat-card.has-logo .cat-bg::after { background: linear-gradient(180deg, transparent 55%, rgba(11, 15, 26, .92) 78%); }
+.cat-card.has-logo:hover .cat-bg img { transform: scale(1.04); }
+@media (max-width: 759px) { .cat-card.has-logo { min-height: 240px; } }
 
 /* ---------- כרטיסים ---------- */
 

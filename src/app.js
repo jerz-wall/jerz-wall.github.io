@@ -165,8 +165,8 @@ function pageHome(params) {
   const cats = DATA.categories
     .map((c) => {
       const list = DATA.shirts.filter((s) => s.category === c.key);
-      return `<a class="card cat-card cat-${c.key}" href="#/${c.key}">
-        <div class="cat-bg">${list.length ? img(coverOf(list), { size: 'l', alt: '' }) : ''}</div>
+      return `<a class="card cat-card cat-${c.key} ${c.logo ? 'has-logo' : ''}" href="#/${c.key}">
+        <div class="cat-bg">${c.logo ? img(c.logo, { size: 'l', alt: '' }) : list.length ? img(coverOf(list), { size: 'l', alt: '' }) : ''}</div>
         <div class="cat-body">
           <span class="cat-icon">${ICONS[c.key]}</span>
           <h2>${esc(c.he)}</h2>

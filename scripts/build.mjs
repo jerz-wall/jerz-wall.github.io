@@ -247,8 +247,16 @@ async function addTeam(category, countryKey, country, folderName, teamDir) {
   }
 }
 
+const catLogos = {};
 for (const category of Object.keys(CATEGORIES)) {
   const catDir = path.join(SHIRTS, category);
+  // תמונה שיושבת ישר בתיקיית הקטגוריה היא הלוגו של הכרטיס בדף הבית
+  const catImgs = (await entries(catDir)).filter((f) => f.isFile() && isImage(f.name)).map((f) => f.name);
+  if (catImgs.length > 1) warn(catDir, `יש ${catImgs.length} תמונות בתיקיית הקטגוריה. מוצגת רק ${catImgs[0]}.`, 'השאירו בתיקיית הקטגוריה תמונה אחת בלבד (הלוגו).');
+  if (catImgs.length) {
+    try { catLogos[category] = await processImage(path.join(catDir, catImgs[0]), { logo: true }); }
+    catch (err) { warn(path.join(catDir, catImgs[0]), `לא הצלחנו לקרוא את התמונה (${err.message}).`, 'נסו לשמור אותה מחדש כ-png או jpg ולהעלות שוב.'); }
+  }
   if (category === 'club') {
     for (const cName of await subdirs(catDir)) {
       const cKey = clean(cName);
@@ -303,7 +311,7 @@ const data = {
   title: config.title || 'JERZ',
   subtitle: config.subtitle || 'קיר החולצות',
   built: new Date().toISOString(),
-  categories: catOrder.map((key) => ({ key, ...CATEGORIES[key], count: shirts.filter((s) => s.category === key).length })),
+  categories: catOrder.map((key) => ({ key, ...CATEGORIES[key], logo: catLogos[key], count: shirts.filter((s) => s.category === key).length })),
   types: Object.fromEntries(Object.entries(TYPES).map(([k, v]) => [k, { he: v.he, en: v.en, letter: v.letter }])),
   countries: Object.fromEntries(Object.entries(countries).filter(([k]) => shirts.some((s) => s.country === k))),
   teams: activeTeams,

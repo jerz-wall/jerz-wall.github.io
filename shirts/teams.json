@@ -6,7 +6,8 @@
     "france":  { "code": "FRA", "he": "צרפת",   "en": "France",  "aliases": ["Ligue 1", "ליג 1", "ליג אן"] },
     "italy":   { "code": "ITA", "he": "איטליה", "en": "Italy",   "aliases": ["Serie A", "סרייה A", "סריה א", "Italia"] },
     "argentina": { "code": "ARG", "he": "ארגנטינה", "en": "Argentina", "aliases": ["Liga Profesional", "הליגה הארגנטינאית", "Primera División"] },
-    "usa": { "code": "USA", "he": "ארצות הברית", "en": "USA", "aliases": ["MLS", "אמריקה", "ארה\"ב", "United States"] }
+    "usa": { "code": "USA", "he": "ארצות הברית", "en": "USA", "aliases": ["MLS", "אמריקה", "ארה\"ב", "United States"] },
+    "saudi-arabia": { "code": "SAU", "he": "ערב הסעודית", "en": "Saudi Arabia", "aliases": ["Saudi Pro League", "RSL", "הליגה הסעודית", "סעודיה"] }
   },
 
   "club": {
@@ -81,6 +82,10 @@
     "roma": {
       "code": "ROM", "he": "רומא", "en": "AS Roma",
       "aliases": ["אס רומא", "ג'אלורוסי", "Roma", "ASR", "Giallorossi"]
+    },
+    "al-nassr": {
+      "code": "NAS", "he": "אל נאסר", "en": "Al Nassr",
+      "aliases": ["אל-נאסר", "אלנאסר", "Al-Nassr", "Nassr", "רונאלדו", "רונלדו", "Ronaldo", "CR7"]
     }
   },
 
@@ -112,6 +117,14 @@
     "portugal": {
       "code": "POR", "he": "פורטוגל", "en": "Portugal",
       "aliases": ["פורטוגאל", "הנבחרת של רונאלדו", "Seleção das Quinas", "Quinas"]
+    },
+    "germany": {
+      "code": "GER", "he": "גרמניה", "en": "Germany",
+      "aliases": ["נבחרת גרמניה", "Die Mannschaft", "Mannschaft", "Deutschland"]
+    },
+    "netherlands": {
+      "code": "NED", "he": "הולנד", "en": "Netherlands",
+      "aliases": ["הכתומים", "Holland", "Oranje", "Nederland"]
     }
   },
 
@@ -121,6 +134,9 @@
     "celtics":  { "code": "BOS", "he": "בוסטון סלטיקס",     "en": "Boston Celtics",        "aliases": ["סלטיקס", "Celtics", "Celts"] },
     "bulls":    { "code": "CHI", "he": "שיקגו בולס",         "en": "Chicago Bulls",         "aliases": ["בולס", "Bulls"] },
     "heat":     { "code": "MIA", "he": "מיאמי היט",          "en": "Miami Heat",            "aliases": ["היט", "Heat"] },
-    "portland": { "code": "POR", "he": "פורטלנד טרייל בלייזרס", "en": "Portland Trail Blazers", "aliases": ["פורטלנד", "בלייזרס", "Portland", "Blazers", "Trail Blazers", "Rip City"] }
+    "portland": { "code": "POR", "he": "פורטלנד טרייל בלייזרס", "en": "Portland Trail Blazers", "aliases": ["פורטלנד", "בלייזרס", "Portland", "Blazers", "Trail Blazers", "Rip City"] },
+    "brooklyn": { "code": "BKN", "he": "ברוקלין נטס", "en": "Brooklyn Nets", "aliases": ["ברוקלין", "נטס", "Brooklyn", "Nets"] },
+    "oklahoma-city": { "code": "OKC", "he": "אוקלהומה סיטי ת'אנדר", "en": "Oklahoma City Thunder", "aliases": ["אוקלהומה", "ת'אנדר", "תאנדר", "OKC", "Thunder", "Oklahoma"] },
+    "san-antonio": { "code": "SAS", "he": "סן אנטוניו ספרס", "en": "San Antonio Spurs", "aliases": ["סן אנטוניו", "ספרס", "וומבניאמה", "Spurs", "San Antonio", "Wembanyama", "Wemby"] }
   }
 }
