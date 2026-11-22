@@ -279,6 +279,17 @@ function pageShirt(code) {
     )
     .join('');
   const more = byTeam.get(t.id).filter((x) => x.code !== s.code);
+  const sibs = byTeam.get(t.id);
+  const idx = sibs.indexOf(s);
+  const prevS = sibs[idx - 1];
+  const nextS = sibs[idx + 1];
+  const nav = sibs.length > 1
+    ? `<nav class="shirt-nav" aria-label="מעבר בין חולצות של ${esc(t.he)}">
+        ${prevS ? `<a class="chip" href="${shirtHref(prevS)}" data-dir="prev">› הקודמת</a>` : '<span></span>'}
+        <span class="shirt-nav-pos">${idx + 1} / ${sibs.length}</span>
+        ${nextS ? `<a class="chip" href="${shirtHref(nextS)}" data-dir="next">הבאה ‹</a>` : '<span></span>'}
+      </nav>`
+    : '';
   return {
     title: `${t.he} ${descOf(s)}`,
     html: `${teamCrumbs(t, descOf(s))}
@@ -304,10 +315,11 @@ function pageShirt(code) {
             <span class="pick-mark">✓</span><span class="pick-text">${picked.has(s.code) ? 'נבחרה לרשימה' : 'בחירה לרשימה'}</span>
           </button>
           <div class="list-actions shirt-share">${shareButtons(s.code)}</div>
+          ${nav}
         </div>
       </article>
       ${more.length ? `<section><div class="section-head"><h2>עוד חולצות של ${esc(t.he)}</h2></div>${grid(more.map((x) => shirtCard(x, { showTeam: false })).join(''))}</section>` : ''}`,
-    after: () => setupGallery(s),
+    after: () => { setupGallery(s); setupShirtSwipe(); },
   };
 }
 
@@ -543,6 +555,27 @@ function setupGallery(shirt) {
   $$('.slide', track).forEach((b) => b.addEventListener('click', () => openLightbox(shirt, +b.dataset.i)));
 }
 
+// החלקה ימינה/שמאלה בדף חולצה (מחוץ לתמונות) עוברת לחולצה הקודמת/הבאה של הקבוצה
+function setupShirtSwipe() {
+  const page = $('.shirt-page');
+  if (!page) return;
+  let x0 = null, y0 = 0;
+  page.addEventListener('touchstart', (e) => {
+    if (e.target.closest('.gallery')) return (x0 = null);
+    x0 = e.touches[0].clientX;
+    y0 = e.touches[0].clientY;
+  }, { passive: true });
+  page.addEventListener('touchend', (e) => {
+    if (x0 == null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    const dy = e.changedTouches[0].clientY - y0;
+    x0 = null;
+    if (Math.abs(dx) < 60 || Math.abs(dy) > 50) return;
+    // בעברית "הבאה" משמאל: החלקה שמאלה = הבאה
+    $(`.shirt-nav [data-dir="${dx < 0 ? 'next' : 'prev'}"]`)?.click();
+  }, { passive: true });
+}
+
 // ---------- תצוגה מוגדלת ----------
 
 const lb = $('#lightbox');
@@ -615,7 +648,11 @@ $('.lb-next', lb).addEventListener('click', () => lbStep(1));
 $('.lb-prev', lb).addEventListener('click', () => lbStep(-1));
 window.addEventListener('popstate', closeLightboxUi);
 document.addEventListener('keydown', (e) => {
-  if (!lbOpen) return;
+  if (!lbOpen) {
+    if (e.target.closest('input, textarea') || !(e.key === 'ArrowLeft' || e.key === 'ArrowRight')) return;
+    $(`.shirt-nav [data-dir="${e.key === 'ArrowLeft' ? 'next' : 'prev'}"]`)?.click();
+    return;
+  }
   if (e.key === 'Escape') closeLightbox();
   if (e.key === 'ArrowLeft') lbStep(1); // בעברית "הבאה" נמצאת משמאל
   if (e.key === 'ArrowRight') lbStep(-1);
@@ -631,6 +668,51 @@ function toast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 1600);
 }
+
+// קונפטי ירוק-לבן-צהוב, בלי ספריות. אם וואטסאפ נפתח והדף הוסתר, מופיע שוב כשחוזרים
+let confettiOnReturn = false;
+function confetti() {
+  if (reduceMotion) return;
+  const c = document.createElement('canvas');
+  c.className = 'confetti';
+  const dpr = devicePixelRatio || 1;
+  c.width = innerWidth * dpr;
+  c.height = innerHeight * dpr;
+  document.body.append(c);
+  const ctx = c.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const colors = ['#39FF88', '#ffffff', '#FFD43B', '#25D366'];
+  const bits = Array.from({ length: 90 }, () => ({
+    x: innerWidth / 2, y: innerHeight * 0.75,
+    vx: (Math.random() - 0.5) * 14, vy: -Math.random() * 16 - 6,
+    r: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.4,
+    w: 6 + Math.random() * 6, h: 4 + Math.random() * 4,
+    color: colors[(Math.random() * colors.length) | 0],
+  }));
+  const start = performance.now();
+  (function frame(now) {
+    const p = (now - start) / 1600;
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    for (const b of bits) {
+      b.vy += 0.45; b.x += b.vx; b.y += b.vy; b.r += b.vr;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, 1 - p);
+      ctx.translate(b.x, b.y);
+      ctx.rotate(b.r);
+      ctx.fillStyle = b.color;
+      ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h);
+      ctx.restore();
+    }
+    if (p < 1) requestAnimationFrame(frame);
+    else c.remove();
+  })(start);
+}
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && confettiOnReturn) {
+    confettiOnReturn = false;
+    confetti();
+  }
+});
 
 
 // ---------- הרשימה שלי: בחירת חולצות ושליחה בוואטסאפ ----------
@@ -649,6 +731,22 @@ function savePicked() {
     localStorage.setItem(LIST_KEY, JSON.stringify([...picked]));
   } catch {}
 }
+
+// טיפ שמופיע פעם אחת בלבד, עד שבוחרים חולצה או סוגרים אותו
+const HINT_KEY = 'jerz-hint-seen';
+function showHint() {
+  try {
+    if (localStorage.getItem(HINT_KEY) || picked.size) return;
+  } catch {
+    return;
+  }
+  setTimeout(() => { if (!picked.size) $('#hint').hidden = false; }, 1500);
+}
+function hideHint() {
+  $('#hint').hidden = true;
+  try { localStorage.setItem(HINT_KEY, '1'); } catch {}
+}
+$('.hint-x').addEventListener('click', hideHint);
 
 const siteUrl = () => location.origin + location.pathname;
 const listUrl = (codes) => `${siteUrl()}#/list?c=${codes.join(',')}`;
@@ -677,11 +775,12 @@ function shareButtons(code = '') {
               <button class="btn" type="button" data-share="${canShare ? 'native' : 'copy'}"${c}>${canShare ? `${SHARE_ICON}שיתוף` : code ? 'העתקת קישור' : 'העתקת ההודעה'}</button>`;
 }
 
-function togglePick(code) {
+function togglePick(code, from) {
   const on = !picked.has(code);
   if (on) picked.add(code);
   else picked.delete(code);
   savePicked();
+  hideHint();
   $$(`[data-pick="${code}"]`).forEach((b) => {
     b.classList.toggle('on', on);
     b.setAttribute('aria-pressed', String(on));
@@ -691,6 +790,7 @@ function togglePick(code) {
   $$(`[data-card="${code}"]`).forEach((c) => c.classList.toggle('picked', on));
   toast(on ? 'נוספה לרשימה ✓' : 'הוסרה מהרשימה');
   updateListBar();
+  if (on) flyToBar(from);
   if (location.hash.startsWith('#/list') && !location.hash.includes('c=')) route();
 }
 
@@ -698,10 +798,36 @@ function togglePick(code) {
 function updateListBar() {
   const bar = $('#listbar');
   const n = picked.size;
-  const hide = !n || location.hash.startsWith('#/list');
+  const hide = location.hash.startsWith('#/list');
   bar.classList.toggle('show', !hide);
+  bar.classList.toggle('empty', !n);
   document.body.classList.toggle('has-bar', !hide);
-  if (n) $('.lb-num', bar).textContent = n === 1 ? 'חולצה אחת נבחרה' : `${n} חולצות נבחרו`;
+  $('.lb-num', bar).textContent = !n ? 'בחרו חולצות ושלחו לחבר' : n === 1 ? 'חולצה אחת נבחרה' : `${n} חולצות נבחרו`;
+  $('.lb-go', bar).textContent = n ? 'לרשימה ושליחה ‹' : 'איך? ‹';
+}
+
+// אנימציה: תמונת החולצה עפה אל הפס הירוק, והפס קופץ
+function flyToBar(from) {
+  const bar = $('#listbar');
+  if (reduceMotion || !from || !bar.classList.contains('show')) return;
+  const bump = () => bar.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.08)' }, { transform: 'scale(1)' }], { duration: 350, easing: 'ease-out' });
+  const img = from.closest('.pick-wrap, .shirt-page')?.querySelector('.ph img, .slide img');
+  if (!img) return bump();
+  const r = img.getBoundingClientRect();
+  const t = $('.lb-check', bar).getBoundingClientRect();
+  const ghost = img.cloneNode();
+  ghost.removeAttribute('loading');
+  ghost.className = 'fly';
+  Object.assign(ghost.style, { left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px` });
+  document.body.append(ghost);
+  const dx = t.left + t.width / 2 - (r.left + r.width / 2);
+  const dy = t.top + t.height / 2 - (r.top + r.height / 2);
+  ghost
+    .animate(
+      [{ transform: 'translate(0, 0) scale(1)', opacity: 1 }, { transform: `translate(${dx}px, ${dy}px) scale(.08)`, opacity: .7 }],
+      { duration: 600, easing: 'cubic-bezier(.5, 0, .75, 0)' },
+    )
+    .finished.then(() => { ghost.remove(); bump(); });
 }
 
 function pageList(params) {
@@ -738,7 +864,7 @@ document.addEventListener('click', async (e) => {
   if (pick) {
     e.preventDefault();
     e.stopPropagation();
-    return togglePick(pick.dataset.pick);
+    return togglePick(pick.dataset.pick, pick);
   }
   const adopt = e.target.closest('[data-adopt]');
   if (adopt) {
@@ -753,6 +879,9 @@ document.addEventListener('click', async (e) => {
   const one = share.dataset.code && shirtByCode.get(share.dataset.code);
   const text = one ? shirtShareText(one) : whatsappText(pickedShirts());
   if (share.dataset.share === 'whatsapp') {
+    confetti();
+    confettiOnReturn = true;
+    setTimeout(() => (confettiOnReturn = false), 60000);
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
   } else if (share.dataset.share === 'native') {
     try {
@@ -799,6 +928,7 @@ async function init() {
   setupSearch();
   window.addEventListener('hashchange', route);
   route();
+  showHint();
 }
 
 init();

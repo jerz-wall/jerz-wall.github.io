@@ -439,6 +439,9 @@ button { font: inherit; color: inherit; }
 .lb-check { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #04120A; color: var(--neon); font-weight: 900; }
 .lb-num { flex: 1; }
 .lb-go { padding: 6px 12px; border-radius: 999px; background: rgba(4, 18, 10, .12); font-size: 14px; white-space: nowrap; }
+.listbar.empty { background: rgba(11, 15, 26, .92); color: var(--muted); border: 1.5px dashed rgba(57, 255, 136, .55); box-shadow: 0 12px 40px rgba(0, 0, 0, .5); backdrop-filter: blur(8px); font-weight: 500; font-size: 15px; }
+.listbar.empty .lb-check { background: transparent; border: 2px solid var(--neon); color: var(--neon); }
+.listbar.empty .lb-go { background: rgba(255, 255, 255, .06); color: var(--neon); }
 body.has-bar .view { padding-bottom: 110px; }
 body.has-bar .toast { bottom: calc(88px + env(safe-area-inset-bottom)); }
 
@@ -474,3 +477,22 @@ body.has-bar .toast { bottom: calc(88px + env(safe-area-inset-bottom)); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+.shirt-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 18px 0 0; }
+.shirt-nav-pos { color: var(--muted); font-size: 14px; }
+
+.hint {
+  position: fixed; z-index: 51; inset-inline: 16px; bottom: calc(80px + env(safe-area-inset-bottom));
+  max-width: 520px; margin: 0 auto; display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-radius: 16px; background: #fff; color: #0B0F1A; font-weight: 500; font-size: 15px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .5); animation: hint-in .4s var(--ease);
+}
+.hint::after { content: ''; position: absolute; bottom: -7px; inset-inline-start: 34px; width: 14px; height: 14px; background: #fff; rotate: 45deg; }
+.hint[hidden] { display: none; }
+.hint-check { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--neon); font-weight: 900; }
+.hint-x { margin-inline-start: auto; font-size: 22px; line-height: 1; padding: 0 4px; color: #0B0F1A; background: none; border: 0; cursor: pointer; }
+@keyframes hint-in { from { opacity: 0; translate: 0 10px; } }
+
+.fly { position: fixed; z-index: 60; object-fit: cover; border-radius: 16px; pointer-events: none; box-shadow: 0 10px 30px rgba(0, 0, 0, .5); }
+
+.confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 70; pointer-events: none; }
