@@ -496,3 +496,71 @@ body.has-bar .toast { bottom: calc(88px + env(safe-area-inset-bottom)); }
 .fly { position: fixed; z-index: 60; object-fit: cover; border-radius: 16px; pointer-events: none; box-shadow: 0 10px 30px rgba(0, 0, 0, .5); }
 
 .confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 70; pointer-events: none; }
+
+/* 1: התמונה גדלה מהכרטיס לדף החולצה */
+::view-transition-group(hero-shirt) { animation-duration: .45s; animation-timing-function: var(--ease); }
+::view-transition-old(hero-shirt), ::view-transition-new(hero-shirt) { height: 100%; object-fit: cover; }
+
+/* 5: מעבר בין חולצות מחליק לכיוון ההחלקה. בעברית "הבאה" משמאל */
+html[data-slide="next"]::view-transition-old(root) { animation: .28s ease both slide-to-left; }
+html[data-slide="next"]::view-transition-new(root) { animation: .34s var(--ease) both slide-from-right; }
+html[data-slide="prev"]::view-transition-old(root) { animation: .28s ease both slide-to-right; }
+html[data-slide="prev"]::view-transition-new(root) { animation: .34s var(--ease) both slide-from-left; }
+@keyframes slide-to-left { to { opacity: 0; transform: translateX(-18%); } }
+@keyframes slide-to-right { to { opacity: 0; transform: translateX(18%); } }
+@keyframes slide-from-right { from { opacity: 0; transform: translateX(18%); } }
+@keyframes slide-from-left { from { opacity: 0; transform: translateX(-18%); } }
+
+/* 2: כרטיסים שעולים בגלילה */
+.reveal { opacity: 0; transform: translateY(22px); }
+.reveal.in { opacity: 1; transform: none; transition: opacity .5s var(--ease) var(--d, 0ms), transform .5s var(--ease) var(--d, 0ms); }
+
+/* 3: ✓ שמתפוצץ */
+@keyframes burst {
+  from { box-shadow: 0 0 0 0 rgba(57, 255, 136, .8), 0 0 0 0 rgba(255, 255, 255, .6); }
+  to { box-shadow: 0 0 0 22px rgba(57, 255, 136, 0), 0 0 0 34px rgba(255, 255, 255, 0); }
+}
+.pick.on.burst { animation: picked .35s var(--ease), burst .65s ease-out; }
+.pick-big.burst .pick-mark { animation: picked .35s var(--ease), burst .65s ease-out; }
+
+/* 4: כרטיסי אספנות (במחשב) */
+.pick-wrap .shirt-card.tilt {
+  transform: perspective(800px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(-6px);
+  transition: transform .08s linear, box-shadow .3s, border-color .3s;
+}
+.shirt-card .ph::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; transition: opacity .3s;
+  background:
+    radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, .35), transparent 45%),
+    linear-gradient(115deg, transparent 30%, rgba(57, 255, 136, .18) 45%, rgba(61, 123, 255, .18) 55%, transparent 70%);
+  mix-blend-mode: overlay;
+}
+.shirt-card.tilt .ph::after { opacity: 1; }
+
+/* 7: סמל הקבוצה נכנס בסיבוב */
+.view:not(.repaint) .team-head .crest { animation: crest-in .8s var(--ease) both; }
+@keyframes crest-in {
+  from { opacity: 0; transform: rotate(-180deg) scale(.4); }
+  60% { opacity: 1; transform: rotate(8deg) scale(1.08); box-shadow: 0 0 30px rgba(57, 255, 136, .8); }
+  to { transform: none; box-shadow: 0 0 0 rgba(57, 255, 136, 0); }
+}
+
+/* 8: הפס הריק "נושם" */
+.listbar.empty.show { animation: breathe 4.5s ease-in-out infinite; }
+@keyframes breathe {
+  0%, 70%, 100% { border-color: rgba(57, 255, 136, .55); box-shadow: 0 12px 40px rgba(0, 0, 0, .5); }
+  85% { border-color: rgba(57, 255, 136, 1); box-shadow: 0 12px 40px rgba(0, 0, 0, .5), 0 0 26px rgba(57, 255, 136, .5); }
+}
+
+/* 9: הבהוב ניאון בלוגו כשהאתר נפתח */
+.brand-name { animation: neon-on 1.5s linear both; }
+@keyframes neon-on {
+  0% { opacity: 0; }
+  8% { opacity: 1; }
+  11% { opacity: .15; }
+  18% { opacity: 1; }
+  21% { opacity: .3; }
+  28%, 100% { opacity: 1; }
+  45% { filter: drop-shadow(0 0 18px rgba(57, 255, 136, .8)); }
+  100% { filter: drop-shadow(0 0 0 rgba(57, 255, 136, 0)); }
+}

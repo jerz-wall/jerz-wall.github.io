@@ -285,9 +285,9 @@ function pageShirt(code) {
   const nextS = sibs[idx + 1];
   const nav = sibs.length > 1
     ? `<nav class="shirt-nav" aria-label="מעבר בין חולצות של ${esc(t.he)}">
-        ${prevS ? `<a class="chip" href="${shirtHref(prevS)}" data-dir="prev">› הקודמת</a>` : '<span></span>'}
+        ${prevS ? `<a class="chip" href="${shirtHref(prevS)}" data-dir="prev"><span dir="ltr">›</span> הקודמת</a>` : '<span></span>'}
         <span class="shirt-nav-pos">${idx + 1} / ${sibs.length}</span>
-        ${nextS ? `<a class="chip" href="${shirtHref(nextS)}" data-dir="next">הבאה ‹</a>` : '<span></span>'}
+        ${nextS ? `<a class="chip" href="${shirtHref(nextS)}" data-dir="next">הבאה <span dir="ltr">‹</span></a>` : '<span></span>'}
       </nav>`
     : '';
   return {
@@ -351,6 +351,33 @@ function notFound() {
 
 let lastPath = null;
 
+// אנימציות מעבר: תמונת הכרטיס "גדלה" לדף החולצה, ומעבר בין חולצות מחליק לצד
+let navDir = null; // 'next' / 'prev' כשעוברים בין חולצות עם החצים או בהחלקה
+const heroImg = (el) => el && (el.style.viewTransitionName = 'hero-shirt');
+const inView = (el) => {
+  const r = el?.getBoundingClientRect();
+  return r && r.bottom > 0 && r.top < innerHeight;
+};
+
+// כרטיסים עולים ומופיעים כשהם נכנסים למסך, כל אחד קצת אחרי הקודם בשורה
+let revealIO;
+function revealCards() {
+  if (reduceMotion || !('IntersectionObserver' in window)) return;
+  revealIO ||= new IntersectionObserver(
+    (entries) => entries.forEach((en) => {
+      if (!en.isIntersecting) return;
+      en.target.classList.add('in');
+      revealIO.unobserve(en.target);
+    }),
+    { rootMargin: '0px 0px -30px 0px' },
+  );
+  $$('.grid > *').forEach((el, i) => {
+    el.classList.add('reveal');
+    el.style.setProperty('--d', `${(i % 4) * 70}ms`);
+    revealIO.observe(el);
+  });
+}
+
 function route() {
   closeSuggest();
   const raw = location.hash.replace(/^#\/?/, '');
@@ -369,22 +396,41 @@ function route() {
   else page = notFound();
 
   const newPage = p !== lastPath;
+  const fromShirt = lastPath?.startsWith('shirt/') ? lastPath.slice(6) : null;
+  const toShirt = a === 'shirt' ? b : null;
+  const slide = fromShirt && toShirt ? navDir : null;
+  const hero = !slide && newPage && (toShirt || fromShirt);
+  navDir = null;
   lastPath = p;
 
   const paint = () => {
     view.innerHTML = page.html;
+    view.classList.toggle('repaint', !newPage);
     if (newPage) window.scrollTo({ top: 0, behavior: 'instant' });
     page.after?.();
     markPopular();
     updateListBar();
+    if (newPage) revealCards();
+    if (hero) {
+      const el = toShirt ? $('.slide img') : $(`[data-card="${fromShirt}"] .ph img`);
+      if (inView(el)) {
+        el.closest('.reveal')?.classList.remove('reveal');
+        heroImg(el);
+      }
+    }
   };
 
   document.title = page.title ? `${page.title} · JERZ` : `JERZ · ${DATA.subtitle}`;
   if (newPage && document.startViewTransition && !reduceMotion && !document.hidden) {
+    if (hero) heroImg(toShirt ? $(`[data-card="${toShirt}"] .ph img`) : $('.slide img'));
+    if (slide) document.documentElement.dataset.slide = slide;
     const vt = document.startViewTransition(paint);
     vt.ready.catch(() => {});
     vt.updateCallbackDone.catch(() => {});
-    vt.finished.catch(() => {});
+    vt.finished.catch(() => {}).finally(() => {
+      delete document.documentElement.dataset.slide;
+      $$('[style*="view-transition-name"]').forEach((el) => (el.style.viewTransitionName = ''));
+    });
   } else if (newPage) {
     paint();
     view.classList.remove('enter');
@@ -791,6 +837,12 @@ function togglePick(code, from) {
   toast(on ? 'נוספה לרשימה ✓' : 'הוסרה מהרשימה');
   updateListBar();
   if (on) flyToBar(from);
+  if (on && from) {
+    from.classList.remove('burst');
+    void from.offsetWidth;
+    from.classList.add('burst');
+    setTimeout(() => from.classList.remove('burst'), 700);
+  }
   if (location.hash.startsWith('#/list') && !location.hash.includes('c=')) route();
 }
 
@@ -803,7 +855,7 @@ function updateListBar() {
   bar.classList.toggle('empty', !n);
   document.body.classList.toggle('has-bar', !hide);
   $('.lb-num', bar).textContent = !n ? 'בחרו חולצות ושלחו לחבר' : n === 1 ? 'חולצה אחת נבחרה' : `${n} חולצות נבחרו`;
-  $('.lb-go', bar).textContent = n ? 'לרשימה ושליחה ‹' : 'איך? ‹';
+  $('.lb-go', bar).innerHTML = `${n ? 'לרשימה ושליחה' : 'איך?'} <span dir="ltr">‹</span>`;
 }
 
 // אנימציה: תמונת החולצה עפה אל הפס הירוק, והפס קופץ
@@ -828,6 +880,29 @@ function flyToBar(from) {
       { duration: 600, easing: 'cubic-bezier(.5, 0, .75, 0)' },
     )
     .finished.then(() => { ghost.remove(); bump(); });
+}
+
+// במחשב: הכרטיס נוטה אחרי העכבר ועובר עליו ברק הולוגרפי
+const canTilt = matchMedia('(hover: hover) and (pointer: fine)').matches && !reduceMotion;
+let tiltEl = null;
+if (canTilt) {
+  document.addEventListener('pointermove', (e) => {
+    const c = e.target.closest?.('.shirt-card');
+    if (tiltEl && tiltEl !== c) {
+      tiltEl.classList.remove('tilt');
+      tiltEl = null;
+    }
+    if (!c) return;
+    tiltEl = c;
+    const r = c.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width;
+    const y = (e.clientY - r.top) / r.height;
+    c.style.setProperty('--rx', `${(0.5 - y) * 10}deg`);
+    c.style.setProperty('--ry', `${(x - 0.5) * 12}deg`);
+    c.style.setProperty('--mx', `${x * 100}%`);
+    c.style.setProperty('--my', `${y * 100}%`);
+    c.classList.add('tilt');
+  }, { passive: true });
 }
 
 function pageList(params) {
@@ -860,6 +935,8 @@ function pageList(params) {
 }
 
 document.addEventListener('click', async (e) => {
+  const dirLink = e.target.closest('[data-dir]');
+  if (dirLink) navDir = dirLink.dataset.dir;
   const pick = e.target.closest('[data-pick]');
   if (pick) {
     e.preventDefault();
