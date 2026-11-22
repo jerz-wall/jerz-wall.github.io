@@ -1,4 +1,4 @@
-// KITZ · קיר החולצות
+// JERZ · קיר החולצות
 // אפליקציית עמוד יחיד: כל הנתונים מגיעים מ-data.json שנוצר בסקריפט הבנייה.
 
 const $ = (sel, el = document) => el.querySelector(sel);
@@ -311,14 +311,12 @@ function pageShirt(code) {
 function pageSearch(q, params) {
   const hits = rank(q, 50);
   const teamIds = new Set();
-  const codes = new Set();
   for (const h of hits) {
     if (h.kind === 'team') teamIds.add(h.id);
     if (h.kind === 'country') DATA.teams.filter((t) => t.country === h.id).forEach((t) => teamIds.add(t.id));
     if (h.kind === 'category') DATA.teams.filter((t) => t.category === h.id).forEach((t) => teamIds.add(t.id));
-    if (h.kind === 'shirt') codes.add(h.id);
   }
-  const list = DATA.shirts.filter((s) => teamIds.has(s.team) || codes.has(s.code));
+  const list = DATA.shirts.filter((s) => teamIds.has(s.team));
   const f = filters(list, params, `#/search/${encodeURIComponent(q)}`);
   const teamChips = [...teamIds].map((id) => teamById.get(id)).map((t) => `<a class="chip" href="${teamHref(t)}">${esc(t.he)}</a>`).join('');
   return {
@@ -366,7 +364,7 @@ function route() {
     updateListBar();
   };
 
-  document.title = page.title ? `${page.title} · KITZ` : `KITZ · ${DATA.subtitle}`;
+  document.title = page.title ? `${page.title} · JERZ` : `JERZ · ${DATA.subtitle}`;
   if (newPage && document.startViewTransition && !reduceMotion && !document.hidden) {
     const vt = document.startViewTransition(paint);
     vt.ready.catch(() => {});
@@ -416,20 +414,12 @@ function buildIndex() {
       image: t.logo || coverOf(byTeam.get(t.id)), logo: !!t.logo, terms: [t.he, t.en, t.key, t.code, ...t.aliases], rank: 3,
     });
   }
-  for (const s of DATA.shirts) {
-    const t = teamById.get(s.team);
-    searchIndex.push({ kind: 'shirt', id: s.code, label: s.code, sub: `${t.he} · ${s.season} · ${typeHe(s.type)}`, href: shirtHref(s), image: s.images[0], terms: [s.code], codeOnly: true, rank: 0 });
-  }
   for (const e of searchIndex) e.nterms = e.terms.filter(Boolean).map(norm);
 }
 
 function score(e, q) {
   let best = 0;
   for (const term of e.nterms) {
-    if (e.codeOnly) {
-      if (q.length >= 2 && term.startsWith(q.replace(/ /g, ''))) best = Math.max(best, 60);
-      continue;
-    }
     if (term === q) best = Math.max(best, 100);
     else if (term.startsWith(q)) best = Math.max(best, 75);
     else if (term.split(' ').some((w) => w.startsWith(q))) best = Math.max(best, 55);
@@ -628,7 +618,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowRight') lbStep(-1);
 });
 
-// ---------- העתקת קוד ----------
+// ---------- הודעה קופצת ----------
 
 let toastTimer;
 function toast(msg) {
@@ -643,7 +633,7 @@ function toast(msg) {
 // ---------- הרשימה שלי: בחירת חולצות ושליחה בוואטסאפ ----------
 // הבחירה נשמרת בדפדפן של מי שבחר. כדי להעביר אותה לחבר שולחים קישור שמכיל את קודי החולצות.
 
-const LIST_KEY = 'kitz-list';
+const LIST_KEY = 'jerz-list';
 const picked = new Set();
 
 function loadPicked() {
@@ -666,12 +656,12 @@ function whatsappText(list) {
     const t = teamById.get(s.team);
     return `${i + 1}. ${t.he} · ${s.season} · ${typeHe(s.type)}\n    ${s.code}`;
   });
-  return `👕 החולצות שבחרתי ב-KITZ:\n\n${lines.join('\n')}\n\nלצפייה בחולצות:\n${listUrl(list.map((s) => s.code))}`;
+  return `👕 החולצות שבחרתי ב-JERZ:\n\n${lines.join('\n')}\n\nלצפייה בחולצות:\n${listUrl(list.map((s) => s.code))}`;
 }
 
 function shirtShareText(s) {
   const t = teamById.get(s.team);
-  return `👕 תראו את החולצה הזו ב-KITZ:\n${t.he} · ${s.season} · ${typeHe(s.type)}\n${s.code}\n\n${siteUrl()}#/shirt/${s.code}`;
+  return `👕 תראו את החולצה הזו ב-JERZ:\n${t.he} · ${s.season} · ${typeHe(s.type)}\n${s.code}\n\n${siteUrl()}#/shirt/${s.code}`;
 }
 
 const canShare = typeof navigator.share === 'function';
@@ -763,7 +753,7 @@ document.addEventListener('click', async (e) => {
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
   } else if (share.dataset.share === 'native') {
     try {
-      await navigator.share({ title: 'KITZ · קיר החולצות', text });
+      await navigator.share({ title: 'JERZ · קיר החולצות', text });
     } catch {}
   } else if (share.dataset.share === 'copy') {
     try {

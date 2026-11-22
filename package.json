@@ -1,8 +1,8 @@
 {
-  "name": "kitz",
+  "name": "jerz",
   "private": true,
   "type": "module",
-  "description": "KITZ - קיר החולצות",
+  "description": "JERZ - קיר החולצות",
   "scripts": {
     "build": "node scripts/build.mjs",
     "serve": "node scripts/serve.mjs",

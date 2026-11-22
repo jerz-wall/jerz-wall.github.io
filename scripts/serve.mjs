@@ -23,4 +23,4 @@ http
       res.writeHead(404).end('Not found');
     }
   })
-  .listen(PORT, () => console.log(`KITZ רץ בכתובת http://localhost:${PORT}`));
+  .listen(PORT, () => console.log(`JERZ רץ בכתובת http://localhost:${PORT}`));

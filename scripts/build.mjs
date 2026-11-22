@@ -1,4 +1,4 @@
-// סקריפט הבנייה של KITZ
+// סקריפט הבנייה של JERZ
 // סורק את התיקייה shirts/, יוצר קוד לכל חולצה, מכווץ תמונות ובונה את האתר לתוך dist/.
 // בעיות בתיקיות (קבוצה חסרה, שם תיקייה שגוי) מוצגות כאזהרה, והבנייה ממשיכה.
 
@@ -300,7 +300,7 @@ const popular = (config.popular || []).filter((id) => {
 });
 
 const data = {
-  title: config.title || 'KITZ',
+  title: config.title || 'JERZ',
   subtitle: config.subtitle || 'קיר החולצות',
   built: new Date().toISOString(),
   categories: catOrder.map((key) => ({ key, ...CATEGORIES[key], count: shirts.filter((s) => s.category === key).length })),
@@ -346,7 +346,7 @@ if (warnings.length) {
 }
 
 if (process.env.GITHUB_STEP_SUMMARY) {
-  let md = `## KITZ: נבנו ${shirts.length} חולצות\n\n`;
+  let md = `## JERZ: נבנו ${shirts.length} חולצות\n\n`;
   md += data.categories.map((c) => `- ${c.he}: ${c.count}`).join('\n') + '\n\n';
   if (warnings.length) {
     md += `### ⚠ ${warnings.length} דברים לתקן\n\n| איפה | מה הבעיה | איך מתקנים |\n|---|---|---|\n`;
