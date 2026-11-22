@@ -753,7 +753,7 @@ document.addEventListener('click', async (e) => {
   const one = share.dataset.code && shirtByCode.get(share.dataset.code);
   const text = one ? shirtShareText(one) : whatsappText(pickedShirts());
   if (share.dataset.share === 'whatsapp') {
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
   } else if (share.dataset.share === 'native') {
     try {
       await navigator.share({ title: 'JERZ · קיר החולצות', text });
