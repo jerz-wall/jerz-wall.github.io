@@ -65,14 +65,14 @@ function pickButton(code) {
 function shirtCard(s, { showTeam = true } = {}) {
   const t = teamById.get(s.team);
   return `<div class="pick-wrap ${picked.has(s.code) ? 'picked' : ''}" data-card="${esc(s.code)}">${pickButton(s.code)}<a class="card shirt-card" href="${shirtHref(s)}">
-    <div class="ph">${img(s.images[0], { alt: `${t.he} ${s.season} ${typeHe(s.type)}` })}
+    <div class="ph">${img(s.images[0], { alt: `${t.he} ${seasonOf(s)} ${typeHe(s.type)}` })}
       <span class="badge type-${s.type}">${esc(typeHe(s.type))}</span>
       ${isNew(s) ? '<span class="new">חדש</span>' : ''}
       ${s.images.length > 1 ? `<span class="pics" aria-label="${s.images.length} תמונות">${s.images.length} 📷</span>` : ''}
     </div>
     <div class="meta">
       ${showTeam ? `<strong>${esc(t.he)}</strong>` : `<strong>${esc(typeHe(s.type))}</strong>`}
-      <span class="sub">${esc(s.season)}${showTeam ? ` · ${esc(typeHe(s.type))}` : ''}</span>
+      <span class="sub">${esc(showTeam ? descOf(s) : seasonOf(s))}</span>
     </div>
   </a></div>`;
 }
@@ -92,6 +92,9 @@ function tile({ href, title, sub, count, image, logo, icon }) {
 // ---------- עונות ותקופות ----------
 
 const yearOf = (s) => Number(String(s.season).slice(0, 4));
+// ב-NBA לא מציגים עונה למשתמש (היא נשארת רק בקוד החולצה)
+const seasonOf = (s) => (s.category === 'nba' ? '' : s.season);
+const descOf = (s) => [seasonOf(s), typeHe(s.type)].filter(Boolean).join(' · ');
 let latestYear = 0; // השנה של העונה האחרונה שיש באתר
 let manyYears = false; // האם יש באתר חולצות מיותר משנה אחת
 
@@ -107,7 +110,7 @@ const eraLabel = (k) =>
 const eraRank = (k) => (k === 'now' ? 1e6 : k === 'classic' ? 0 : +k);
 
 // תגית "חדש" רק כשיש באתר גם חולצות משנים קודמות
-const isNew = (s) => manyYears && yearOf(s) === latestYear;
+const isNew = (s) => manyYears && s.category !== 'nba' && yearOf(s) === latestYear;
 
 // סינון לפי תקופה ולפי סוג. הבחירה נשמרת בכתובת (?era=2000&type=away) כדי שכפתור "אחורה" יעבוד
 function filters(list, params, base) {
@@ -148,7 +151,7 @@ function bySeason(list) {
   const seasons = [...new Set(list.map((s) => s.season))].sort((a, b) => b.localeCompare(a));
   return seasons
     .map(
-      (se) => `<section class="season"><h2 class="season-title">${esc(seasonTitle(se))}</h2>${grid(
+      (se) => `<section class="season">${list[0].category !== 'nba' ? `<h2 class="season-title">${esc(seasonTitle(se))}</h2>` : ''}${grid(
         list.filter((s) => s.season === se).map((s) => shirtCard(s, { showTeam: false })).join(''),
       )}</section>`,
     )
@@ -266,7 +269,7 @@ function pageShirt(code) {
   const cat = catOf(s.category);
   const country = s.country ? DATA.countries[s.country] : null;
   const many = s.images.length > 1;
-  const alt = `${t.he} ${s.season} ${typeHe(s.type)}`;
+  const alt = `${t.he} ${seasonOf(s)} ${typeHe(s.type)}`;
   const slides = s.images
     .map(
       (im, i) => `<button class="slide" type="button" data-i="${i}" aria-label="הגדלת תמונה ${i + 1}">
@@ -277,8 +280,8 @@ function pageShirt(code) {
     .join('');
   const more = byTeam.get(t.id).filter((x) => x.code !== s.code);
   return {
-    title: `${t.he} ${s.season} ${typeHe(s.type)}`,
-    html: `${teamCrumbs(t, `${s.season} · ${typeHe(s.type)}`)}
+    title: `${t.he} ${descOf(s)}`,
+    html: `${teamCrumbs(t, descOf(s))}
       <article class="shirt-page">
         <div class="gallery-wrap">
           <div class="gallery" id="gallery">${slides}</div>
@@ -292,7 +295,7 @@ function pageShirt(code) {
           <h1>${esc(t.he)}</h1>
           <p class="en">${esc(t.en)}</p>
           <dl>
-            <div><dt>עונה</dt><dd>${esc(s.season)}</dd></div>
+            ${seasonOf(s) ? `<div><dt>עונה</dt><dd>${esc(s.season)}</dd></div>` : ''}
             <div><dt>סוג</dt><dd>${esc(typeHe(s.type))}</dd></div>
             <div><dt>קטגוריה</dt><dd>${esc(cat.he)}</dd></div>
             ${country ? `<div><dt>מדינה</dt><dd>${esc(country.he)}</dd></div>` : ''}
@@ -549,7 +552,7 @@ let lbOpen = false;
 function openLightbox(shirt, start) {
   const t = teamById.get(shirt.team);
   lbTrack.innerHTML = shirt.images
-    .map((im) => `<div class="lb-slide"><img src="${im.l}" alt="${esc(`${t.he} ${shirt.season}`)}" width="${im.w}" height="${im.h}"></div>`)
+    .map((im) => `<div class="lb-slide"><img src="${im.l}" alt="${esc(`${t.he} ${seasonOf(shirt)}`)}" width="${im.w}" height="${im.h}"></div>`)
     .join('');
   lb.classList.toggle('single', shirt.images.length < 2);
   lb.hidden = false;
@@ -654,14 +657,14 @@ const pickedShirts = () => DATA.shirts.filter((s) => picked.has(s.code));
 function whatsappText(list) {
   const lines = list.map((s, i) => {
     const t = teamById.get(s.team);
-    return `${i + 1}. ${t.he} · ${s.season} · ${typeHe(s.type)}\n    ${s.code}`;
+    return `${i + 1}. ${t.he} · ${descOf(s)}\n    ${s.code}`;
   });
   return `👕 החולצות שבחרתי ב-JERZ:\n\n${lines.join('\n')}\n\nלצפייה בחולצות:\n${listUrl(list.map((s) => s.code))}`;
 }
 
 function shirtShareText(s) {
   const t = teamById.get(s.team);
-  return `👕 תראו את החולצה הזו ב-JERZ:\n${t.he} · ${s.season} · ${typeHe(s.type)}\n${s.code}\n\n${siteUrl()}#/shirt/${s.code}`;
+  return `👕 תראו את החולצה הזו ב-JERZ:\n${t.he} · ${descOf(s)}\n${s.code}\n\n${siteUrl()}#/shirt/${s.code}`;
 }
 
 const canShare = typeof navigator.share === 'function';
